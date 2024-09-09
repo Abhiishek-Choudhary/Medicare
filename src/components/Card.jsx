@@ -50,7 +50,7 @@ export default function RecipeReviewCard({doctors}) {
         // title={ doctors[0].title }
         subheader="September 14, 2016"
       />
-      <Link to="/profile">
+      <Link to="/docprofile">
       <CardMedia
         component="img"
         height="194"

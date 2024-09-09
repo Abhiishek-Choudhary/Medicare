@@ -25,3 +25,12 @@ export const userDetails = async(user)=>{
         console.log('Error while calling the details api',error);
     }
 }
+
+export const getUserDetails = async()=>{
+    try{
+      return await axios.get(`${url}/profile`);
+    }
+    catch(error){
+        console.log(`Error while calling the get user details api`,error);
+    }
+}

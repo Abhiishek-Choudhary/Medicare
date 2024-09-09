@@ -61,7 +61,7 @@ function Profile() {
         </Box> 
         </Box> 
         <Box className="ml-60 mt-3">
-          <Box className="ml-36 "><Button variant='contained'>Edit</Button></Box>
+          <Box className="ml-14 "><Button variant='contained'>Book Appointment</Button></Box>
           <Typography style={{marginLeft:130,marginTop:3,fontSize:14,fontWeight:600}}>Own Diagnosis</Typography>  
           <Box className="ml-10">
             <Chip label="Obesity"/>
