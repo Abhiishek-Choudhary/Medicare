@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useState } from 'react'
 import PhoneIcon from '@mui/icons-material/Phone';
 import MailIcon from '@mui/icons-material/Mail';
 import PersonIcon from '@mui/icons-material/Person';
@@ -10,10 +10,17 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import SearchAppBar from './SearchAppBar'
 import { Box, Typography,Chip, Button } from '@mui/material'
+import Calender from './Calender';
 
 function Profile() {
 
+  const[open,setOpen] = useState(false);
+
   const url = "https://www.shutterstock.com/image-photo/profile-photo-attractive-family-doc-600nw-1724693776.jpg"
+
+  const handleClick = () => {
+    setOpen(true);
+  }
 
   return (
     <>
@@ -60,8 +67,11 @@ function Profile() {
            </Box>     
         </Box> 
         </Box> 
-        <Box className="ml-60 mt-3">
-          <Box className="ml-14 "><Button variant='contained'>Book Appointment</Button></Box>
+        {open ? <Calender/>:<Box className="ml-60 mt-3">
+            <Box className="ml-14 ">
+            <Button open={open} onClick={handleClick}
+             variant='contained'>Book Appointment</Button>
+            </Box>
           <Typography style={{marginLeft:130,marginTop:3,fontSize:14,fontWeight:600}}>Own Diagnosis</Typography>  
           <Box className="ml-10">
             <Chip label="Obesity"/>
@@ -72,7 +82,8 @@ function Profile() {
             <Chip label="Fear of medication"/>
             <Chip label="Fear of Insulin"/>
           </Box>
-        </Box> 
+        </Box>
+        } 
        </Box>    
     </>
   )
