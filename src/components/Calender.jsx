@@ -21,6 +21,8 @@ function Calender() {
       events={events}
       startAccessor="start"
       endAccessor="end"
+      // views={['day', 'week']}
+      step={30} // Time slot interval in minutes
       style={{ height: 500 }}
     />
   </div>

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import {Box,styled,Avatar, Typography} from '@mui/material'
+import {styled, Table, TableHead, TableRow, TableBody,TableCell} from '@mui/material'
 import { getUserDetails } from '../services/api';
 
-const Wrapper = styled(Box)`
-    margin-left: 30px;
-    margin-top: 50px;
-`;
+const TableRowWrapper = styled(TableRow)`
+   margin-left: 50px;
+`
 
 function MyProfile() {
 
     const [users,setUsers] = useState([]);
+    const [id,setId] = useState(0);
+
 
    useEffect(()=>{
        const UserDetails = async() => {
@@ -17,31 +18,37 @@ function MyProfile() {
           setUsers(response.data);
        }
        UserDetails();
-   })
-
+   },[])
+  
   return (
-    <Wrapper className="rounded-lg shadow-lg w-72 h-auto bg-sky-100">
-      <Box style={{marginLeft: 120,paddingTop:5}}>
-        <Avatar/>
-      </Box>
-      <Box>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Id</TableCell>
+          <TableCell>Firstname</TableCell>
+          <TableCell>Lastname</TableCell>
+          <TableCell>Age</TableCell>
+          <TableCell>Gender</TableCell>
+          <TableCell>Issue</TableCell>
+          <TableCell>Precription</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
         {
-            users.map(user=>(
-                <>
-                    <Box style={{display:'flex',marginLeft:65,padding:5}}>
-                        <Typography style={{marginRight:5}}>{user.firstname}</Typography>
-                        <Typography style={{marginRight:5}}>{user.age}</Typography>
-                        <Typography>{user.gender}</Typography>
-                    </Box>
-                    <Box className="m-7">
-                        <Typography>{user.issues}</Typography>
-                        <Typography style={{marginTop:5, paddingBottom:10,paddingTop:10}}>{user.precription}</Typography>
-                    </Box>
-                    </>
-            ))
+           users.map(user=>(
+            <TableRowWrapper >
+              <TableCell>{id}</TableCell>
+              <TableCell>{user.firstname}</TableCell>
+              <TableCell>{user.lastname}</TableCell>
+              <TableCell>{user.age}</TableCell>
+              <TableCell>{user.gender}</TableCell>
+              <TableCell>{user.issues}</TableCell>
+              <TableCell>{user.precription}</TableCell>
+            </TableRowWrapper>
+           ))
         }
-      </Box>
-    </Wrapper>
+      </TableBody>
+    </Table>
   )
 }
 

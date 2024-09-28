@@ -16,7 +16,7 @@ const StyledBox = styled(Box)`
 
 function Navbar() {
 
-    const url2="https://img.freepik.com/premium-vector/avatar-portrait-young-caucasian-boy-man-round-frame-vector-cartoon-flat-illustration_551425-19.jpg"
+    // const url2="https://img.freepik.com/premium-vector/avatar-portrait-young-caucasian-boy-man-round-frame-vector-cartoon-flat-illustration_551425-19.jpg"
      
     const url = 'https://marketplace.canva.com/EAE8eSD-Zyo/1/0/1600w/canva-blue%2C-white-and-green-medical-care-logo-oz1ox2GedbU.jpg'
 
@@ -29,11 +29,12 @@ function Navbar() {
         <Typography>Home</Typography>
         <Typography><Link to='/profile'>About</Link></Typography>
         <Typography>Doctor</Typography>
+        <Typography><Link to='/meetings'>Meetings</Link></Typography>
         <Typography>Payments</Typography>
       </StyledBox>
       {
         // <img src={url2} alt='profile' style={{width:50, marginLeft:660, cursor:'pointer'}}/> 
-        <Button style={{marginLeft: 650 }}><Link to='/login'>Login</Link></Button>
+        <Button style={{marginLeft: 480 }}><Link to='/login'>Login</Link></Button>
       }
     </Box>
   )
