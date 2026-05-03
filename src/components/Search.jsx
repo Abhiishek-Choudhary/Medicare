@@ -1,26 +1,38 @@
-import { Input,Box,styled,Typography } from '@mui/material'
+import { Box, Typography, InputAdornment, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
-const SearchContainer = styled(Box)`
-    margin-top: 70px;
-    margin-left: 500px;
-    &>p{
-       font-size: x-large
-    }
-`
+function Search({ search, setSearch }) {
+    const navigate = useNavigate();
 
-function Search() {
-  return (
-    <>
-     <SearchContainer>
-        <Typography><b style={{marginLeft: 200}}>Search <span style={{color: 'blue'}}> Doctors </span></b></Typography>
-        <Typography style={{color: 'grey'}}>Search your doctor and book appointment in one click</Typography>
-        <Box><SearchIcon/><input style={{padding: 7, marginTop: 10, width: 525, borderRadius: '20px', border: '1px solid grey'}} type='text' placeholder='Search Doctor' /></Box>
-     </SearchContainer>
-     <Box></Box>
-    </>
-  )
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') navigate('/doctors');
+    };
+
+    return (
+        <Box sx={{ textAlign: 'center', py: 6 }}>
+            <Typography variant="h5" fontWeight={700} mb={0.5}>
+                Search <span style={{ color: '#1976d2' }}>Doctors</span>
+            </Typography>
+            <Typography color="text.secondary" mb={3}>
+                Search your doctor and book an appointment in one click
+            </Typography>
+            <TextField
+                placeholder="Search by name or specialty..."
+                value={search || ''}
+                onChange={(e) => setSearch?.(e.target.value)}
+                onKeyDown={handleKeyDown}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon color="action" />
+                        </InputAdornment>
+                    ),
+                }}
+                sx={{ width: 480, bgcolor: '#fff', borderRadius: 2 }}
+            />
+        </Box>
+    );
 }
 
-export default Search
+export default Search;

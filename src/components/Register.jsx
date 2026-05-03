@@ -1,90 +1,75 @@
-import React from 'react'
-import { useState,useContext } from 'react';
-import { Box,TextField,styled,Button, Typography } from '@mui/material';
-import { Link,useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Box, TextField, Button, Typography, Paper, Alert } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import { authenticateSignUp } from '../services/api';
 
-// import { DataContext } from '../context/DataProvider';
+const REGISTER_IMG = "https://boldist.co/wp-content/uploads/2023/06/What-Is-Social-Login-and-Does-Your-Business-Need-It_.jpg";
 
-const StyledBox = styled(Box)`
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    margin-right: 200px;
-    height: 50%;
-    width: 30%;
-`;
-
-const InputFeild = styled(TextField)`
-  margin-bottom: 20px;
-`
-
-const CustomButton = styled(Button)`
-   padding: 10px;
-`;
-
-const RandomBox = styled(Box)`
-    display: flex;
-    margin-top: 5px;
-    color: #0188ff;
-`
-
-const signupInitialValues = {
-    username:'',
-    email: '',
-    password: '',
-}
+const initialValues = { username: '', email: '', password: '' };
 
 function Register() {
-  
-    const [signup, setSignUp] = useState(signupInitialValues);
-
-    const url =
-    "https://boldist.co/wp-content/uploads/2023/06/What-Is-Social-Login-and-Does-Your-Business-Need-It_.jpg";
-  
+    const [form, setForm] = useState(initialValues);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // const {setAccount} = useContext(DataContext);
+    const onChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        setError('');
+    };
 
-    const onInputChange = (e) => {
-         setSignUp({...signup,[e.target.name]:e.target.value})
-    }
+    const handleSubmit = async () => {
+        if (!form.username || !form.email || !form.password) {
+            setError('Please fill in all fields.');
+            return;
+        }
+        setLoading(true);
+        const response = await authenticateSignUp(form);
+        setLoading(false);
+        if (response?.data) {
+            navigate('/login');
+        } else {
+            setError('Registration failed. Please try again.');
+        }
+    };
 
-    const handleSubmit = async() => {
-       let response = await authenticateSignUp(signup);
-       if(response){
-        //  setAccount(signup.username);
-         navigate('/login');
-       }
-      else return;
-    }
+    const handleKeyDown = (e) => { if (e.key === 'Enter') handleSubmit(); };
 
-  return (
-        <Box className="flex">
-          <Box>
-            <img
-              src={url}
-              alt="Hospital"
-              style={{ width: "80%", height: "100vh" }}
-            />
-          </Box>
-          <StyledBox>
-            <InputFeild onChange={(e)=>onInputChange(e)} label="Username" name="username">
-            </InputFeild>
-            <InputFeild onChange={(e)=>onInputChange(e)} label="Email" name="email">
-            </InputFeild>
-            <InputFeild onChange={(e)=>onInputChange(e)} label="Password" name="password">
-            </InputFeild>
-            <CustomButton variant="contained" onClick={()=>handleSubmit()}>
-              Register
-            </CustomButton>
-            <RandomBox>
-            <Typography>Already Registered User</Typography>
-            <Typography style={{marginLeft: '120px',cursor: 'pointer'}}><Link to="/login">Login</Link></Typography>
-            </RandomBox>
-          </StyledBox>
+    return (
+        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+            <Box sx={{ flex: 1, display: { xs: 'none', md: 'block' } }}>
+                <img src={REGISTER_IMG} alt="Medicare" style={{ width: '100%', height: '100vh', objectFit: 'cover' }} />
+            </Box>
+
+            <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 4, bgcolor: '#f8fafd' }}>
+                <Paper elevation={3} sx={{ p: 5, width: '100%', maxWidth: 440, borderRadius: 3 }}>
+                    <Typography variant="h5" fontWeight={700} mb={0.5}>Create Account</Typography>
+                    <Typography variant="body2" color="text.secondary" mb={3}>
+                        Join Medicare as a patient
+                    </Typography>
+
+                    {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
+                    <TextField fullWidth label="Username" name="username" value={form.username}
+                        onChange={onChange} onKeyDown={handleKeyDown} sx={{ mb: 2 }} />
+                    <TextField fullWidth label="Email" name="email" type="email" value={form.email}
+                        onChange={onChange} onKeyDown={handleKeyDown} sx={{ mb: 2 }} />
+                    <TextField fullWidth label="Password" name="password" type="password" value={form.password}
+                        onChange={onChange} onKeyDown={handleKeyDown} sx={{ mb: 3 }} />
+
+                    <Button fullWidth variant="contained" size="large" onClick={handleSubmit}
+                        disabled={loading} sx={{ borderRadius: 2, py: 1.5, mb: 2 }}>
+                        {loading ? 'Creating account...' : 'Register'}
+                    </Button>
+
+                    <Typography variant="body2" textAlign="center">
+                        Already registered?{' '}
+                        <Link to="/login" style={{ color: '#1976d2', fontWeight: 600 }}>Sign in</Link>
+                    </Typography>
+                </Paper>
+            </Box>
         </Box>
-  )
+    );
 }
 
-export default Register
+export default Register;

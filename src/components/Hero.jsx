@@ -1,178 +1,205 @@
+import React, { useState } from 'react';
 import {
-  Box,
-  Button,
-  Dialog,
-  DialogTitle,
-  styled,
-  TextField,
-  Typography,
-  FormControl,
-  FormControlLabel,
-  RadioGroup,
-  Radio,
-} from "@mui/material";
-import React, { useState } from "react";
-import { userDetails } from "../services/api";
+    Box, Button, Dialog, DialogTitle, DialogContent, DialogActions,
+    TextField, Typography, FormControl, FormControlLabel,
+    RadioGroup, Radio, Grid, Alert
+} from '@mui/material';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import GroupsIcon from '@mui/icons-material/Groups';
+import { Link } from 'react-router-dom';
+import { userDetails } from '../services/api';
 
-const ImageContainer = styled(Box)`
-  width: 500px;
-  margin-left: 330px;
-`;
-const TextContainer = styled(Typography)`
-  margin-left: 100px;
-  margin-top: 50px;
-  font-size: xx-large;
-  font-weight: bold;
-`;
+const HERO_IMG = 'https://img.freepik.com/premium-photo/four-people-wearing-lab-coats-are-posing-photo_198067-951158.jpg?w=740';
 
-const ButtonContainer = styled(Button)`
-  position: relative;
-  margin-left: 100px;
-  margin-top: 20px;
-  padding: 10px;
-`;
+const STATS = [
+    { icon: GroupsIcon, value: '500+', label: 'Doctors' },
+    { icon: CalendarMonthIcon, value: '10k+', label: 'Appointments' },
+    { icon: VerifiedIcon, value: '98%', label: 'Satisfaction' },
+    { icon: SupportAgentIcon, value: '24/7', label: 'Support' },
+];
 
-const TextWrapper = styled(Typography)`
-  margin-top: 240px;
-  margin-left: 100px;
-  color: grey;
-`;
-
-const DialogWrapper = styled(DialogTitle)`
-  margin: auto;
-  font-size: larger;
-  font-weight: 600;
-`;
-
-const CustomButton = styled(Button)`
-    margin-top: 10px;
-    margin-bottom: 30px;
-    width: 535px;
-    margin-left: 25px;
-`;
+const initialForm = { firstname: '', lastname: '', age: '', gender: '', issues: '', radio: '', precription: '' };
 
 function Hero() {
+    const [open, setOpen] = useState(false);
+    const [form, setForm] = useState(initialForm);
+    const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-  const [form,setForm] = useState({});
-  const [open, setOpen] = useState(false);
+    const onValueChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
+    const handleSubmit = async () => {
+        setLoading(true);
+        const response = await userDetails(form);
+        setLoading(false);
+        if (response) {
+            setSubmitted(true);
+            setTimeout(() => { setOpen(false); setSubmitted(false); setForm(initialForm); }, 2000);
+        }
+    };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const onValueChange = (e)=> {
-    setForm({...form,[e.target.name]: e.target.value});
-  }
-
-  const handleSubmit = async() => {
-     const response = await userDetails(form);
-     if(response){
-      handleClose();
-     }
-     else return;
-  };
-
-  const url =
-    "https://img.freepik.com/premium-photo/four-people-wearing-lab-coats-are-posing-photo_198067-951158.jpg?w=740";
-  return (
-    <>
-      <Box className="flex mt-20 absolute">
-        <TextContainer>
-          Find & Book <span style={{ color: "blue" }}>Appointment</span> with
-          <br /> your <span style={{ color: "blue" }}> favouriate </span>doctor.
-        </TextContainer>
-        <ImageContainer>
-          <img style={{ borderRadius: "1rem" }} src={url} alt="doctor" />
-        </ImageContainer>
-      </Box>
-      <TextWrapper>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Impedit quam
-        illo nostrum alias,
-        <br /> at sequi animi asperiores dolorem molestias laborum debitis
-        harum, numquam,
-        <br /> architecto dicta earum quibusdam soluta officiis ipsam iusto
-        cumque commodi rerum
-        <br /> nam? Non quo, quibusdam{" "}
-      </TextWrapper>
-      <ButtonContainer variant="contained" onClick={handleOpen}>
-        Getting Started
-      </ButtonContainer>
-      <Dialog
-        open={open}
-         onClose={handleClose}
-        fullWidth={750}
-      >
-        <DialogWrapper>Patient Form</DialogWrapper>
-        <Box className="m-5">
-          <TextField
-            variant="outlined"
-            label="firstname"
-            style={{ marginLeft: 10 }}
-            name="firstname"
-            onChange={(e)=>onValueChange(e)}
-          ></TextField>
-          <TextField
-            variant="outlined"
-            label="lastname"
-            style={{ marginLeft: 90 }}
-            name="lastname"
-            onChange={(e)=>onValueChange(e)}
-          ></TextField>
-        </Box>
-        <Box className="m-5">
-          <TextField
-            variant="outlined"
-            label="Age"
-            style={{ marginLeft: 10 }}
-            name="age"
-            onChange={(e)=>onValueChange(e)}
-          ></TextField>
-          <TextField
-            variant="outlined"
-            label="Gender"
-            style={{ marginLeft: 90 }}
-            name="gender"
-            onChange={(e)=>onValueChange(e)}
-          ></TextField>
-        </Box>
-        <Box className="m-5">
-          <TextField
-            variant="outlined"
-            label="Issues"
-            style={{ marginLeft: 10, width: 535 }}
-            name="issues"
-            onChange={(e)=>onValueChange(e)}
-          ></TextField>
-        </Box>
-        <Box className='m-7'>
-          <Typography>Have you consulted any doctor before?</Typography>
-          <FormControl>
-            <RadioGroup
-              aria-labelledby="demo-radio-buttons-group-label"
-              name="radio-buttons-group"
+    return (
+        <>
+            {/* Hero Section */}
+            <Box
+                sx={{
+                    background: 'linear-gradient(135deg, #e8f4fd 0%, #f0f7ff 50%, #e3f2fd 100%)',
+                    px: { xs: 3, md: 8 },
+                    py: { xs: 6, md: 8 },
+                }}
             >
-              <FormControlLabel
-                control={<Radio />}
-                label="Yes"
-                name="radio"
-                onChange={(e)=>onValueChange(e)}
-              />
-              <FormControlLabel value="male" control={<Radio />} label="No" name="radio" onChange={(e)=>onValueChange(e)}/>
-            </RadioGroup>
-          </FormControl>
-        </Box>
-        <Box className="ml-6">
-          <Typography style={{marginLeft:3,marginBottom:3}}>Any Precription/Medicine you are taking?</Typography>
-          <TextField variant="outlined" style={{width:535}} name="precription" onChange={(e)=>onValueChange(e)}></TextField>
-        </Box>
-        <CustomButton variant="contained" onClick={()=>handleSubmit()}>Submit</CustomButton>
-      </Dialog>
-    </>
-  );
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', maxWidth: 1200, mx: 'auto' }}>
+                    {/* Text Side */}
+                    <Box sx={{ flex: 1, minWidth: 280 }}>
+                        <Box sx={{
+                            display: 'inline-block', bgcolor: '#e3f2fd', color: '#1976d2',
+                            px: 2, py: 0.5, borderRadius: 5, fontSize: 13, fontWeight: 600, mb: 2
+                        }}>
+                            #1 Healthcare Platform
+                        </Box>
+                        <Typography
+                            variant="h3"
+                            fontWeight={800}
+                            lineHeight={1.2}
+                            mb={2}
+                            sx={{ fontSize: { xs: '2rem', md: '2.8rem' } }}
+                        >
+                            Find & Book{' '}
+                            <Box component="span" sx={{ color: '#1976d2' }}>Appointments</Box>
+                            {' '}with Your{' '}
+                            <Box component="span" sx={{ color: '#1976d2' }}>Favourite</Box>{' '}
+                            Doctor
+                        </Typography>
+                        <Typography color="text.secondary" fontSize={16} lineHeight={1.8} mb={4} maxWidth={480}>
+                            Connect with verified healthcare professionals, book appointments instantly,
+                            and manage your health records — all in one place.
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                            <Button
+                                variant="contained"
+                                size="large"
+                                component={Link}
+                                to="/doctors"
+                                sx={{ borderRadius: 2, px: 4, py: 1.5, fontWeight: 600, fontSize: 16 }}
+                            >
+                                Book Appointment
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                size="large"
+                                onClick={() => setOpen(true)}
+                                sx={{ borderRadius: 2, px: 4, py: 1.5, fontWeight: 600, fontSize: 16 }}
+                            >
+                                Get Started
+                            </Button>
+                        </Box>
+                    </Box>
+
+                    {/* Image Side */}
+                    <Box sx={{ flex: 1, minWidth: 280, display: 'flex', justifyContent: 'center' }}>
+                        <Box sx={{
+                            position: 'relative',
+                            '&::before': {
+                                content: '""', position: 'absolute',
+                                inset: -12, borderRadius: '1.5rem',
+                                background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+                                opacity: 0.15, zIndex: 0,
+                            }
+                        }}>
+                            <img
+                                src={HERO_IMG}
+                                alt="Healthcare professionals"
+                                style={{
+                                    width: '100%', maxWidth: 480,
+                                    borderRadius: '1.2rem',
+                                    objectFit: 'cover',
+                                    position: 'relative', zIndex: 1,
+                                    boxShadow: '0 20px 60px rgba(25, 118, 210, 0.2)',
+                                }}
+                            />
+                        </Box>
+                    </Box>
+                </Box>
+            </Box>
+
+            {/* Stats Bar */}
+            <Box sx={{ bgcolor: '#1976d2', py: 3 }}>
+                <Box sx={{
+                    maxWidth: 1200, mx: 'auto', px: 4,
+                    display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: 2
+                }}>
+                    {STATS.map(({ icon: Icon, value, label }) => (
+                        <Box key={label} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, color: '#fff' }}>
+                            <Icon sx={{ fontSize: 32, opacity: 0.9 }} />
+                            <Box>
+                                <Typography fontWeight={800} fontSize={22} lineHeight={1}>{value}</Typography>
+                                <Typography fontSize={13} sx={{ opacity: 0.85 }}>{label}</Typography>
+                            </Box>
+                        </Box>
+                    ))}
+                </Box>
+            </Box>
+
+            {/* Patient Form Dialog */}
+            <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ fontWeight: 700, fontSize: 20, pb: 0 }}>Patient Health Form</DialogTitle>
+                <DialogContent sx={{ pt: 2 }}>
+                    {submitted ? (
+                        <Alert severity="success" sx={{ my: 2 }}>
+                            Details saved successfully! We'll get in touch soon.
+                        </Alert>
+                    ) : (
+                        <>
+                            <Grid container spacing={2} sx={{ mt: 0.5 }}>
+                                <Grid item xs={6}>
+                                    <TextField fullWidth label="First Name" name="firstname" onChange={onValueChange} />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField fullWidth label="Last Name" name="lastname" onChange={onValueChange} />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField fullWidth label="Age" name="age" type="number" onChange={onValueChange} />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField fullWidth label="Gender" name="gender" onChange={onValueChange} />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField fullWidth label="Medical Issues" name="issues" multiline rows={2} onChange={onValueChange} />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography variant="body2" fontWeight={600} mb={0.5}>
+                                        Have you consulted a doctor before?
+                                    </Typography>
+                                    <FormControl>
+                                        <RadioGroup row name="radio" onChange={onValueChange}>
+                                            <FormControlLabel value="yes" control={<Radio />} label="Yes" name="radio" />
+                                            <FormControlLabel value="no" control={<Radio />} label="No" name="radio" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth label="Current Prescription / Medicines"
+                                        name="precription" multiline rows={2} onChange={onValueChange}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </>
+                    )}
+                </DialogContent>
+                {!submitted && (
+                    <DialogActions sx={{ px: 3, pb: 3 }}>
+                        <Button onClick={() => setOpen(false)} color="inherit">Cancel</Button>
+                        <Button variant="contained" onClick={handleSubmit} disabled={loading} sx={{ borderRadius: 2, px: 4 }}>
+                            {loading ? 'Submitting...' : 'Submit'}
+                        </Button>
+                    </DialogActions>
+                )}
+            </Dialog>
+        </>
+    );
 }
 
 export default Hero;
