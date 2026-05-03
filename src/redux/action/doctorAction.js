@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as actionTypes from '../constants/doctorConstants';
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'https://medicare2-0.onrender.com';
 
 export const getDoctors = () => async (dispatch) => {
     try {

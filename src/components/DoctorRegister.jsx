@@ -59,7 +59,7 @@ function DoctorRegister() {
 
         setLoading(true);
         try {
-            const response = await axios.post('http://localhost:8000/upload', formData, {
+            const response = await axios.post('https://medicare2-0.onrender.com/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             if (response?.data?.doctor) {
