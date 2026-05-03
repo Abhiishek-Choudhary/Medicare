@@ -96,4 +96,6 @@ Abhishek Choudhary
 
 ⭐ Show your support
 
+Blood Bank part is pending...
+
 If you like this project, give it a ⭐ on GitHub!
