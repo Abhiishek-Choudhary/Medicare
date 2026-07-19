@@ -4,9 +4,9 @@ A full-stack healthcare application that enables users to browse doctors, book a
 
 🌐 Live Preview
 
-🔗 Frontend: http://example.com/
+🔗 Frontend: medicare-abhishek.vercel.app/
 
-🔗 Backend: http://example.com/
+🔗 Backend: 
 
 ✨ Features
 👨‍⚕️ Doctor Listing & Details
