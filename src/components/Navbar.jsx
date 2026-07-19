@@ -3,10 +3,22 @@ import { Box, Button, Avatar, Menu, MenuItem, Divider, Typography, IconButton, D
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import PersonIcon from '@mui/icons-material/Person';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import ShieldIcon from '@mui/icons-material/Shield';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { DataContext } from '../context/DataProvider';
 import { CartContext } from '../context/CartProvider';
 import { brand } from '../theme';
+
+const ROLE_META = {
+    patient:  { label: 'Patient',       icon: PersonIcon,           color: brand.primary,  bg: alpha(brand.primary, 0.12) },
+    doctor:   { label: 'Doctor',        icon: MedicalServicesIcon,  color: brand.success,  bg: alpha(brand.success, 0.12) },
+    hospital: { label: 'Hospital',      icon: LocalHospitalIcon,    color: brand.accent,   bg: alpha(brand.accent, 0.15) },
+    admin:    { label: 'Administrator', icon: ShieldIcon,           color: '#7c3aed',      bg: alpha('#7c3aed', 0.12) },
+};
 
 const PATIENT_LINKS = [
     { label: 'Home', path: '/' },
@@ -165,41 +177,152 @@ function Navbar() {
                 </Box>
 
                 <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                    {(role !== 'doctor') && (
-                        <IconButton
+                    {(role !== 'doctor' && role !== 'hospital') && (
+                        <Box
                             component={Link}
                             to={account ? '/pharmacy/cart' : '/login'}
-                            sx={{ color: brand.ink }}
+                            sx={{
+                                position: 'relative',
+                                display: 'inline-flex', alignItems: 'center', gap: 0.6,
+                                px: itemCount > 0 ? 1.4 : 1,
+                                py: 0.8,
+                                borderRadius: 999,
+                                textDecoration: 'none',
+                                background: itemCount > 0 ? brand.primarySoft : '#fff',
+                                border: `1px solid ${itemCount > 0 ? alpha(brand.primary, 0.35) : brand.border}`,
+                                color: itemCount > 0 ? brand.primary : brand.ink,
+                                transition: 'transform 0.15s, box-shadow 0.2s, border-color 0.2s, background 0.2s',
+                                '&:hover': {
+                                    borderColor: brand.primary,
+                                    background: brand.primarySoft,
+                                    color: brand.primary,
+                                    boxShadow: `0 6px 18px ${alpha(brand.primary, 0.18)}`,
+                                    transform: 'translateY(-1px)',
+                                    '& .cart-icon': {
+                                        transform: 'rotate(-8deg) scale(1.08)',
+                                    },
+                                },
+                            }}
                         >
-                            <Badge badgeContent={itemCount} color="primary" overlap="circular">
-                                <ShoppingCartOutlinedIcon />
+                            <Badge
+                                badgeContent={itemCount}
+                                overlap="circular"
+                                slotProps={{
+                                    badge: {
+                                        sx: {
+                                            background: `linear-gradient(135deg, ${brand.danger}, #b91c1c)`,
+                                            color: '#fff',
+                                            fontWeight: 800,
+                                            fontSize: 10,
+                                            minWidth: 18, height: 18,
+                                            border: `2px solid #fff`,
+                                            boxShadow: `0 2px 6px ${alpha(brand.danger, 0.4)}`,
+                                            animation: itemCount > 0 ? 'cartPop 0.4s ease' : 'none',
+                                            '@keyframes cartPop': {
+                                                '0%': { transform: 'scale(0.6)' },
+                                                '60%': { transform: 'scale(1.15)' },
+                                                '100%': { transform: 'scale(1)' },
+                                            },
+                                        },
+                                    },
+                                }}
+                            >
+                                <ShoppingCartOutlinedIcon
+                                    className="cart-icon"
+                                    sx={{
+                                        fontSize: 22,
+                                        transition: 'transform 0.2s ease',
+                                    }}
+                                />
                             </Badge>
-                        </IconButton>
+                            {itemCount > 0 && (
+                                <Typography
+                                    variant="caption"
+                                    fontWeight={800}
+                                    sx={{
+                                        display: { xs: 'none', sm: 'inline-flex' },
+                                        color: brand.primary,
+                                        fontSize: 12.5,
+                                        letterSpacing: '0.01em',
+                                    }}
+                                >
+                                    {itemCount === 1 ? '1 item' : `${itemCount} items`}
+                                </Typography>
+                            )}
+                        </Box>
                     )}
                     {account ? (
                         <>
-                            <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' }, mr: 0.5 }}>
-                                <Typography variant="body2" fontWeight={700} lineHeight={1.2} color={brand.ink}>
-                                    {displayName}
-                                </Typography>
-                                <Typography variant="caption" sx={{ color: brand.inkFaint, textTransform: 'capitalize' }}>
-                                    {role}
-                                </Typography>
-                            </Box>
-                            <Avatar
-                                onClick={(e) => setAnchorEl(e.currentTarget)}
-                                sx={{
-                                    width: 40, height: 40,
-                                    background: role === 'doctor'
-                                        ? `linear-gradient(135deg, ${brand.success} 0%, #047857 100%)`
-                                        : `linear-gradient(135deg, ${brand.primary} 0%, ${brand.primaryDark} 100%)`,
-                                    fontSize: 15, fontWeight: 700, cursor: 'pointer',
-                                    border: `2px solid ${alpha('#fff', 0.9)}`,
-                                    boxShadow: `0 4px 14px ${alpha(brand.primary, 0.3)}`,
-                                }}
-                            >
-                                {displayName[0].toUpperCase()}
-                            </Avatar>
+                            {(() => {
+                                const meta = ROLE_META[role] || ROLE_META.patient;
+                                const RoleIcon = meta.icon;
+                                return (
+                                    <Box
+                                        onClick={(e) => setAnchorEl(e.currentTarget)}
+                                        sx={{
+                                            display: 'flex', alignItems: 'center', gap: 1,
+                                            pl: 0.6, pr: { xs: 0.6, sm: 1.2 }, py: 0.6,
+                                            borderRadius: 999,
+                                            cursor: 'pointer',
+                                            background: '#fff',
+                                            border: `1px solid ${brand.border}`,
+                                            transition: 'transform 0.15s, box-shadow 0.2s, border-color 0.2s',
+                                            '&:hover': {
+                                                borderColor: meta.color,
+                                                boxShadow: `0 6px 18px ${alpha(meta.color, 0.18)}`,
+                                                transform: 'translateY(-1px)',
+                                            },
+                                        }}
+                                    >
+                                        <Avatar
+                                            sx={{
+                                                width: 34, height: 34,
+                                                background: `linear-gradient(135deg, ${meta.color}, ${alpha(meta.color, 0.8)})`,
+                                                fontSize: 14, fontWeight: 800,
+                                                boxShadow: `0 4px 10px ${alpha(meta.color, 0.35)}`,
+                                            }}
+                                        >
+                                            {displayName[0].toUpperCase()}
+                                        </Avatar>
+                                        <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', lineHeight: 1, minWidth: 0 }}>
+                                            <Typography
+                                                variant="body2"
+                                                fontWeight={700}
+                                                color={brand.ink}
+                                                sx={{
+                                                    fontSize: 13.5, lineHeight: 1.1,
+                                                    maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                                }}
+                                            >
+                                                {displayName}
+                                            </Typography>
+                                            <Box sx={{
+                                                display: 'inline-flex', alignItems: 'center', gap: 0.4,
+                                                mt: 0.3,
+                                            }}>
+                                                <RoleIcon sx={{ fontSize: 11, color: meta.color }} />
+                                                <Typography
+                                                    variant="caption"
+                                                    sx={{
+                                                        color: meta.color,
+                                                        fontWeight: 700, fontSize: 10.5,
+                                                        letterSpacing: '0.06em',
+                                                        textTransform: 'uppercase', lineHeight: 1,
+                                                    }}
+                                                >
+                                                    {meta.label}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                        <KeyboardArrowDownIcon
+                                            sx={{
+                                                display: { xs: 'none', sm: 'inline-flex' },
+                                                fontSize: 18, color: brand.inkFaint,
+                                            }}
+                                        />
+                                    </Box>
+                                );
+                            })()}
                             <Menu
                                 anchorEl={anchorEl}
                                 open={Boolean(anchorEl)}
@@ -207,17 +330,56 @@ function Navbar() {
                                 slotProps={{
                                     paper: {
                                         sx: {
-                                            mt: 1.2, borderRadius: 3, minWidth: 220,
+                                            mt: 1.2, borderRadius: 3, minWidth: 260,
                                             border: `1px solid ${brand.border}`,
                                             boxShadow: '0 12px 40px rgba(15,23,42,0.12)',
+                                            overflow: 'hidden',
                                         },
                                     },
                                 }}
                             >
-                                <MenuItem disabled sx={{ fontSize: 12.5, opacity: 0.75 }}>
-                                    {account.email}
-                                </MenuItem>
-                                <Divider />
+                                {(() => {
+                                    const meta = ROLE_META[role] || ROLE_META.patient;
+                                    const RoleIcon = meta.icon;
+                                    return (
+                                        <Box sx={{ p: 2, background: meta.bg, borderBottom: `1px solid ${brand.border}` }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                                                <Avatar sx={{
+                                                    width: 42, height: 42, fontWeight: 800, fontSize: 16,
+                                                    background: `linear-gradient(135deg, ${meta.color}, ${alpha(meta.color, 0.8)})`,
+                                                    boxShadow: `0 4px 12px ${alpha(meta.color, 0.35)}`,
+                                                }}>
+                                                    {displayName[0].toUpperCase()}
+                                                </Avatar>
+                                                <Box sx={{ minWidth: 0, flex: 1 }}>
+                                                    <Typography fontWeight={800} sx={{
+                                                        fontSize: 14.5, lineHeight: 1.2, color: brand.ink,
+                                                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                                    }}>
+                                                        {displayName}
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{
+                                                        color: brand.inkMuted, display: 'block',
+                                                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                                    }}>
+                                                        {account.email}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                            <Box sx={{
+                                                mt: 1.5, display: 'inline-flex', alignItems: 'center', gap: 0.5,
+                                                px: 1, py: 0.3, borderRadius: 999,
+                                                background: '#fff', color: meta.color,
+                                                border: `1px solid ${alpha(meta.color, 0.3)}`,
+                                            }}>
+                                                <RoleIcon sx={{ fontSize: 13 }} />
+                                                <Typography variant="caption" fontWeight={700} sx={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                                                    {meta.label}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    );
+                                })()}
                                 {account?.role === 'admin' && (
                                     <MenuItem
                                         onClick={() => { navigate('/admin'); setAnchorEl(null); }}
