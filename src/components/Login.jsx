@@ -45,8 +45,18 @@ function Login() {
         setLoading(false);
 
         if (response?.data?.success) {
-            setAccount(response.data.data, isDoctor ? 'doctor' : 'patient');
-            navigate(isDoctor ? '/doctor-dashboard' : '/');
+            const userData = response.data.data;
+            if (!isDoctor && userData.role === 'hospital') {
+                setError('This is a hospital account. Please use "For Hospitals" sign in.');
+                return;
+            }
+            const resolvedRole = isDoctor ? 'doctor' : 'patient';
+            setAccount(userData, resolvedRole, response.data.token);
+            if (!isDoctor && userData.role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate(isDoctor ? '/doctor-dashboard' : '/');
+            }
         } else {
             setError('Invalid credentials. Please try again.');
         }

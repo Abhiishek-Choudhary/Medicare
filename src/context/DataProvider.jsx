@@ -12,20 +12,25 @@ const DataProvider = ({ children }) => {
         return localStorage.getItem('medicare_role') || null;
     });
 
-    const updateAccount = (user, userRole) => {
+    const [token, setToken] = useState(() => localStorage.getItem('medicare_token'));
+
+    const updateAccount = (user, userRole, userToken) => {
         if (user) {
             localStorage.setItem('medicare_user', JSON.stringify(user));
             localStorage.setItem('medicare_role', userRole);
+            if (userToken) localStorage.setItem('medicare_token', userToken);
         } else {
             localStorage.removeItem('medicare_user');
             localStorage.removeItem('medicare_role');
+            localStorage.removeItem('medicare_token');
         }
         setAccount(user);
         setRole(userRole || null);
+        setToken(userToken || null);
     };
 
     return (
-        <DataContext.Provider value={{ account, role, setAccount: updateAccount }}>
+        <DataContext.Provider value={{ account, role, token, setAccount: updateAccount }}>
             {children}
         </DataContext.Provider>
     );

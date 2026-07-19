@@ -1,6 +1,5 @@
-import { Box, Typography, Divider, IconButton } from '@mui/material';
+import { Box, Typography, IconButton, alpha } from '@mui/material';
 import { Link } from 'react-router-dom';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -8,90 +7,151 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-
-const LOGO_URL = 'https://marketplace.canva.com/EAE8eSD-Zyo/1/0/1600w/canva-blue%2C-white-and-green-medical-care-logo-oz1ox2GedbU.jpg';
+import { brand } from '../theme';
 
 const FooterLink = ({ to, children }) => (
     <Box
         component={Link}
         to={to}
         sx={{
-            display: 'flex', alignItems: 'center', gap: 0.5,
-            color: '#bbb', textDecoration: 'none', fontSize: 14, py: 0.6,
-            '&:hover': { color: '#fff' }, transition: '0.2s',
+            color: alpha('#fff', 0.66),
+            textDecoration: 'none',
+            fontSize: 14,
+            py: 0.7,
+            display: 'block',
+            transition: 'color 0.2s, transform 0.2s',
+            '&:hover': { color: '#fff', transform: 'translateX(3px)' },
         }}
     >
-        <ChevronRightIcon sx={{ fontSize: 16 }} />
         {children}
     </Box>
 );
 
 const ContactRow = ({ icon: Icon, text }) => (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#bbb', fontSize: 14, py: 0.6 }}>
-        <Icon sx={{ fontSize: 18, color: '#90caf9' }} />
-        <Typography variant="body2" color="#bbb">{text}</Typography>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, py: 0.7 }}>
+        <Box sx={{
+            width: 30, height: 30, borderRadius: 1.5,
+            display: 'grid', placeItems: 'center',
+            background: alpha(brand.primary, 0.16),
+            color: brand.primaryLight,
+        }}>
+            <Icon sx={{ fontSize: 15 }} />
+        </Box>
+        <Typography variant="body2" sx={{ color: alpha('#fff', 0.75), fontSize: 13.5 }}>{text}</Typography>
     </Box>
 );
 
+function BrandMark() {
+    return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 2.5 }}>
+            <Box sx={{
+                width: 42, height: 42, borderRadius: 2.2,
+                background: `linear-gradient(135deg, ${brand.primary} 0%, ${brand.primaryDark} 100%)`,
+                display: 'grid', placeItems: 'center',
+                boxShadow: `0 6px 22px ${alpha(brand.primary, 0.5)}`,
+            }}>
+                <svg width={22} height={22} viewBox="0 0 24 24" fill="none">
+                    <path d="M14 3H10V10H3V14H10V21H14V14H21V10H14V3Z" fill="white" />
+                </svg>
+            </Box>
+            <Box sx={{ lineHeight: 1 }}>
+                <Typography fontWeight={800} fontSize={20} color="#fff" letterSpacing="-0.02em">Medicare</Typography>
+                <Typography fontSize={10} fontWeight={700} letterSpacing="0.2em" sx={{ color: brand.primaryLight }}>
+                    HEALTHCARE
+                </Typography>
+            </Box>
+        </Box>
+    );
+}
+
 function Footer() {
     return (
-        <Box sx={{ bgcolor: '#1a1a2e', mt: 8 }}>
-            <Box sx={{
-                maxWidth: 1200, mx: 'auto', px: { xs: 3, md: 6 }, py: 7,
-                display: 'flex', gap: 6, flexWrap: 'wrap',
-            }}>
-                {/* Brand */}
-                <Box sx={{ flex: 2, minWidth: 220 }}>
-                    <img src={LOGO_URL} alt="Medicare" width={90} style={{ borderRadius: 8, marginBottom: 12 }} />
-                    <Typography variant="body2" color="#999" lineHeight={1.8} maxWidth={280}>
-                        Medicare connects patients with trusted healthcare professionals.
-                        Book appointments, manage health records, and stay on top of your wellness.
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-                        {[FacebookIcon, TwitterIcon, InstagramIcon, LinkedInIcon].map((Icon, i) => (
-                            <IconButton key={i} size="small" sx={{ color: '#90caf9', '&:hover': { color: '#fff' } }}>
-                                <Icon fontSize="small" />
-                            </IconButton>
-                        ))}
+        <Box
+            sx={{
+                mt: 10,
+                position: 'relative',
+                background: `radial-gradient(circle at 15% 0%, ${alpha(brand.primary, 0.18)} 0%, transparent 45%),
+                             radial-gradient(circle at 90% 100%, ${alpha(brand.accent, 0.10)} 0%, transparent 40%),
+                             #0B1220`,
+                color: '#fff',
+                overflow: 'hidden',
+            }}
+        >
+            <Box sx={{ maxWidth: 1240, mx: 'auto', px: { xs: 3, md: 6 }, pt: 8, pb: 3 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1.4fr 1fr 1fr 1.2fr' }, gap: { xs: 4, md: 6 } }}>
+                    <Box>
+                        <BrandMark />
+                        <Typography sx={{ color: alpha('#fff', 0.66), lineHeight: 1.75, fontSize: 14, maxWidth: 320 }}>
+                            Medicare connects patients with verified healthcare professionals — book, consult, and manage your health from one place.
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 0.5, mt: 2.5 }}>
+                            {[FacebookIcon, TwitterIcon, InstagramIcon, LinkedInIcon].map((Icon, i) => (
+                                <IconButton
+                                    key={i}
+                                    size="small"
+                                    sx={{
+                                        color: alpha('#fff', 0.7),
+                                        border: `1px solid ${alpha('#fff', 0.12)}`,
+                                        '&:hover': {
+                                            color: '#fff',
+                                            borderColor: brand.primary,
+                                            background: alpha(brand.primary, 0.15),
+                                        },
+                                    }}
+                                >
+                                    <Icon fontSize="small" />
+                                </IconButton>
+                            ))}
+                        </Box>
+                    </Box>
+
+                    <Box>
+                        <Typography fontWeight={700} color="#fff" mb={1.5} fontSize={14} letterSpacing="0.05em"
+                            sx={{ textTransform: 'uppercase' }}>
+                            Explore
+                        </Typography>
+                        <FooterLink to="/">Home</FooterLink>
+                        <FooterLink to="/doctors">Doctors</FooterLink>
+                        <FooterLink to="/meetings">Meetings</FooterLink>
+                        <FooterLink to="/login">Sign in</FooterLink>
+                        <FooterLink to="/register">Register</FooterLink>
+                    </Box>
+
+                    <Box>
+                        <Typography fontWeight={700} color="#fff" mb={1.5} fontSize={14} letterSpacing="0.05em"
+                            sx={{ textTransform: 'uppercase' }}>
+                            Services
+                        </Typography>
+                        <FooterLink to="/doctors">Cardiology</FooterLink>
+                        <FooterLink to="/doctors">Dermatology</FooterLink>
+                        <FooterLink to="/doctors">Neurology</FooterLink>
+                        <FooterLink to="/doctors">Pediatrics</FooterLink>
+                        <FooterLink to="/doctors">Psychiatry</FooterLink>
+                    </Box>
+
+                    <Box>
+                        <Typography fontWeight={700} color="#fff" mb={1.5} fontSize={14} letterSpacing="0.05em"
+                            sx={{ textTransform: 'uppercase' }}>
+                            Get in touch
+                        </Typography>
+                        <ContactRow icon={PhoneIcon} text="+91 78945 76321" />
+                        <ContactRow icon={EmailIcon} text="support@medicare.health" />
+                        <ContactRow icon={LocationOnIcon} text="Mumbai, Maharashtra, India" />
                     </Box>
                 </Box>
 
-                {/* Quick Links */}
-                <Box sx={{ flex: 1, minWidth: 140 }}>
-                    <Typography fontWeight={700} color="#fff" mb={2} fontSize={15}>Quick Links</Typography>
-                    <FooterLink to="/">Home</FooterLink>
-                    <FooterLink to="/doctors">Doctors</FooterLink>
-                    <FooterLink to="/meetings">Meetings</FooterLink>
-                    <FooterLink to="/login">Login</FooterLink>
-                    <FooterLink to="/register">Register</FooterLink>
+                <Box sx={{
+                    mt: 6, pt: 3,
+                    borderTop: `1px solid ${alpha('#fff', 0.08)}`,
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1,
+                }}>
+                    <Typography variant="body2" sx={{ color: alpha('#fff', 0.5), fontSize: 13 }}>
+                        © {new Date().getFullYear()} Medicare. All rights reserved.
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: alpha('#fff', 0.5), fontSize: 13 }}>
+                        Crafted with care for better healthcare.
+                    </Typography>
                 </Box>
-
-                {/* Services */}
-                <Box sx={{ flex: 1, minWidth: 160 }}>
-                    <Typography fontWeight={700} color="#fff" mb={2} fontSize={15}>Our Services</Typography>
-                    <FooterLink to="/doctors">Cardiology</FooterLink>
-                    <FooterLink to="/doctors">Dermatology</FooterLink>
-                    <FooterLink to="/doctors">Neurology</FooterLink>
-                    <FooterLink to="/doctors">Pediatrics</FooterLink>
-                    <FooterLink to="/doctors">Psychiatry</FooterLink>
-                </Box>
-
-                {/* Contact */}
-                <Box sx={{ flex: 1, minWidth: 200 }}>
-                    <Typography fontWeight={700} color="#fff" mb={2} fontSize={15}>Contact Us</Typography>
-                    <ContactRow icon={PhoneIcon} text="+91 78945 76321" />
-                    <ContactRow icon={PhoneIcon} text="+91 89767 88643" />
-                    <ContactRow icon={EmailIcon} text="support@medicare.health" />
-                    <ContactRow icon={LocationOnIcon} text="Mumbai, Maharashtra, India" />
-                </Box>
-            </Box>
-
-            <Divider sx={{ borderColor: '#333' }} />
-
-            <Box sx={{ textAlign: 'center', py: 2.5 }}>
-                <Typography variant="body2" color="#666">
-                    © {new Date().getFullYear()} Medicare. All rights reserved.
-                </Typography>
             </Box>
         </Box>
     );

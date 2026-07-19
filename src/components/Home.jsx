@@ -1,67 +1,82 @@
 import React, { useEffect, useState } from 'react';
 import {
     Box, Typography, TextField, InputAdornment,
-    Button, Grid, Chip, Avatar, Rating
+    Button, Grid, Chip, alpha
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SecurityIcon from '@mui/icons-material/Security';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Link, useNavigate } from 'react-router-dom';
+import DoctorCard from './Card';
+import DoctorCardSkeleton from './DoctorCardSkeleton';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Navbar from './Navbar';
 import Hero from './Hero';
 import Footer from './Footer';
 import { getDoctors } from '../redux/action/doctorAction';
-
-const FALLBACK_IMG = 'https://www.shutterstock.com/image-photo/profile-photo-attractive-family-doc-600nw-1724693776.jpg';
+import { brand } from '../theme';
 
 const FEATURES = [
     {
         icon: FavoriteIcon,
-        title: 'Trusted Doctors',
-        desc: 'All doctors are verified and certified by medical boards.',
-        color: '#e53935',
-        bg: '#fff5f5',
+        title: 'Verified Doctors',
+        desc: 'Every specialist is vetted and certified by medical boards.',
+        color: brand.danger,
+        bg: '#FEF2F2',
     },
     {
         icon: AccessTimeIcon,
         title: 'Instant Booking',
-        desc: 'Book appointments in under a minute, any time of day.',
-        color: '#1976d2',
-        bg: '#f0f7ff',
+        desc: 'Slot an appointment in under a minute, any time of day.',
+        color: brand.primary,
+        bg: brand.primarySoft,
     },
     {
         icon: SecurityIcon,
-        title: 'Secure & Private',
-        desc: 'Your health data is encrypted and never shared.',
-        color: '#2e7d32',
-        bg: '#f0fff4',
+        title: 'Private & Secure',
+        desc: 'Your health data is encrypted end-to-end. Never shared.',
+        color: brand.success,
+        bg: '#ECFDF5',
     },
     {
         icon: LocalHospitalIcon,
         title: 'All Specialties',
-        desc: 'From cardiology to psychiatry — find the right specialist.',
-        color: '#6a1b9a',
-        bg: '#f8f0ff',
+        desc: 'Cardiology to psychiatry — find the right care, fast.',
+        color: '#7C3AED',
+        bg: '#F5F3FF',
     },
 ];
 
 const SPECIALTIES = ['Cardiology', 'Dermatology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Psychiatry'];
 
+function SectionEyebrow({ children }) {
+    return (
+        <Typography sx={{
+            display: 'inline-block',
+            fontSize: 12, fontWeight: 700, letterSpacing: '0.18em',
+            textTransform: 'uppercase', color: brand.primary,
+            background: brand.primarySoft, borderRadius: 999,
+            px: 1.5, py: 0.4, mb: 1.5,
+        }}>
+            {children}
+        </Typography>
+    );
+}
+
 function Home() {
-    const { doctors } = useSelector((state) => state.getDoctors);
+    const { doctors, loading } = useSelector((state) => state.getDoctors);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const [search, setSearch] = useState('');
     const [specialty, setSpecialty] = useState('');
 
     useEffect(() => {
         dispatch(getDoctors());
     }, [dispatch]);
+
+    const isLoading = loading || !doctors;
 
     const filtered = (doctors || [])
         .filter(d => {
@@ -77,18 +92,19 @@ function Home() {
     const preview = filtered.slice(0, 4);
 
     return (
-        <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafd' }}>
+        <Box sx={{ minHeight: '100vh', bgcolor: brand.surfaceMuted }}>
             <Navbar />
             <Hero />
 
             {/* Features Section */}
-            <Box sx={{ px: { xs: 3, md: 8 }, py: 8, maxWidth: 1200, mx: 'auto' }}>
+            <Box sx={{ px: { xs: 3, md: 8 }, pt: { xs: 8, md: 12 }, pb: 8, maxWidth: 1240, mx: 'auto' }}>
                 <Box sx={{ textAlign: 'center', mb: 6 }}>
-                    <Typography variant="h4" fontWeight={800} mb={1}>
-                        Why Choose <Box component="span" sx={{ color: '#1976d2' }}>Medicare?</Box>
+                    <SectionEyebrow>Why Medicare</SectionEyebrow>
+                    <Typography variant="h3" fontWeight={800} mb={1.5} sx={{ fontSize: { xs: '1.9rem', md: '2.4rem' }, letterSpacing: '-0.02em' }}>
+                        Care that fits into your life
                     </Typography>
-                    <Typography color="text.secondary" maxWidth={500} mx="auto">
-                        Everything you need for a seamless healthcare experience
+                    <Typography color="text.secondary" maxWidth={560} mx="auto" fontSize={16}>
+                        Everything you need for a calmer, more connected healthcare experience.
                     </Typography>
                 </Box>
 
@@ -96,21 +112,41 @@ function Home() {
                     {FEATURES.map(({ icon: Icon, title, desc, color, bg }) => (
                         <Grid item xs={12} sm={6} md={3} key={title}>
                             <Box sx={{
-                                bgcolor: '#fff', borderRadius: 3, p: 3.5,
-                                boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+                                position: 'relative',
+                                bgcolor: '#fff',
+                                borderRadius: 4,
+                                p: 3.5,
+                                border: `1px solid ${brand.border}`,
                                 height: '100%',
-                                transition: 'transform 0.2s, box-shadow 0.2s',
-                                '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' },
+                                overflow: 'hidden',
+                                transition: 'transform 0.25s, box-shadow 0.25s, border-color 0.25s',
+                                '&:hover': {
+                                    transform: 'translateY(-6px)',
+                                    boxShadow: '0 20px 44px rgba(15,23,42,0.10)',
+                                    borderColor: alpha(color, 0.4),
+                                },
+                                '&::before': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    top: -30, right: -30,
+                                    width: 90, height: 90,
+                                    borderRadius: '50%',
+                                    background: alpha(color, 0.06),
+                                },
                             }}>
                                 <Box sx={{
-                                    width: 52, height: 52, borderRadius: 2.5,
-                                    bgcolor: bg, display: 'flex', alignItems: 'center',
-                                    justifyContent: 'center', mb: 2,
+                                    position: 'relative',
+                                    width: 52, height: 52, borderRadius: 3,
+                                    bgcolor: bg, display: 'grid', placeItems: 'center', mb: 2.5,
                                 }}>
-                                    <Icon sx={{ color, fontSize: 28 }} />
+                                    <Icon sx={{ color, fontSize: 26 }} />
                                 </Box>
-                                <Typography fontWeight={700} mb={0.8}>{title}</Typography>
-                                <Typography variant="body2" color="text.secondary" lineHeight={1.7}>{desc}</Typography>
+                                <Typography fontWeight={800} mb={0.8} fontSize={17} letterSpacing="-0.01em">
+                                    {title}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" lineHeight={1.7} fontSize={13.5}>
+                                    {desc}
+                                </Typography>
                             </Box>
                         </Grid>
                     ))}
@@ -118,160 +154,119 @@ function Home() {
             </Box>
 
             {/* Doctors Section */}
-            <Box sx={{ bgcolor: '#fff', py: 8 }}>
-                <Box sx={{ px: { xs: 3, md: 8 }, maxWidth: 1200, mx: 'auto' }}>
-                    {/* Section header */}
-                    <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ bgcolor: '#fff', py: { xs: 8, md: 12 }, borderTop: `1px solid ${brand.border}`, borderBottom: `1px solid ${brand.border}` }}>
+                <Box sx={{ px: { xs: 3, md: 8 }, maxWidth: 1240, mx: 'auto' }}>
+                    <Box sx={{
+                        display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+                        mb: 4, flexWrap: 'wrap', gap: 2,
+                    }}>
                         <Box>
-                            <Typography variant="h4" fontWeight={800} mb={0.5}>
-                                Top Rated <Box component="span" sx={{ color: '#1976d2' }}>Doctors</Box>
+                            <SectionEyebrow>Featured</SectionEyebrow>
+                            <Typography variant="h3" fontWeight={800} mb={0.8}
+                                sx={{ fontSize: { xs: '1.9rem', md: '2.4rem' }, letterSpacing: '-0.02em' }}>
+                                Top rated doctors
                             </Typography>
-                            <Typography color="text.secondary" fontSize={15}>
-                                Highly rated specialists trusted by thousands of patients
+                            <Typography color="text.secondary" fontSize={15.5}>
+                                Highly rated specialists trusted by thousands of patients.
                             </Typography>
                         </Box>
                         <Button
                             component={Link} to="/doctors"
                             endIcon={<ArrowForwardIcon />}
-                            sx={{ borderRadius: 2, fontWeight: 600, color: '#1976d2' }}
+                            sx={{
+                                borderRadius: 999, fontWeight: 700,
+                                color: brand.primary,
+                                border: `1.5px solid ${brand.primarySoft}`,
+                                px: 2.5, py: 1,
+                                '&:hover': { background: brand.primarySoft, borderColor: brand.primary },
+                            }}
                         >
-                            View All
+                            View all doctors
                         </Button>
                     </Box>
 
                     {/* Search + Filter */}
-                    <Box sx={{ display: 'flex', gap: 1.5, mb: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <Box sx={{
+                        display: 'flex', gap: 2, mb: 4, flexWrap: 'wrap', alignItems: 'center',
+                        p: 2, borderRadius: 3,
+                        bgcolor: brand.surfaceMuted,
+                        border: `1px solid ${brand.border}`,
+                    }}>
                         <TextField
-                            placeholder="Search doctors..."
+                            placeholder="Search by doctor name or specialty..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             size="small"
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <SearchIcon fontSize="small" color="action" />
+                                        <SearchIcon fontSize="small" sx={{ color: brand.inkFaint }} />
                                     </InputAdornment>
                                 ),
                             }}
-                            sx={{ width: 240, '& .MuiOutlinedInput-root': { borderRadius: 2, bgcolor: '#f8fafd' } }}
+                            sx={{ width: 280, '& .MuiOutlinedInput-root': { bgcolor: '#fff' } }}
                         />
-                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                            <Chip label="All" size="small" onClick={() => setSpecialty('')}
-                                color={!specialty ? 'primary' : 'default'}
-                                variant={!specialty ? 'filled' : 'outlined'}
-                                sx={{ cursor: 'pointer' }} />
-                            {SPECIALTIES.map(s => (
-                                <Chip key={s} label={s} size="small"
-                                    onClick={() => setSpecialty(s === specialty ? '' : s)}
-                                    color={specialty === s ? 'primary' : 'default'}
-                                    variant={specialty === s ? 'filled' : 'outlined'}
-                                    sx={{ cursor: 'pointer' }} />
-                            ))}
+                        <Box sx={{ display: 'flex', gap: 0.8, flexWrap: 'wrap' }}>
+                            <Chip
+                                label="All"
+                                size="small"
+                                onClick={() => setSpecialty('')}
+                                sx={{
+                                    cursor: 'pointer',
+                                    fontWeight: 700,
+                                    background: !specialty ? brand.ink : '#fff',
+                                    color: !specialty ? '#fff' : brand.inkMuted,
+                                    border: `1px solid ${!specialty ? brand.ink : brand.border}`,
+                                    '&:hover': { background: !specialty ? brand.ink : brand.surfaceAlt },
+                                }}
+                            />
+                            {SPECIALTIES.map(s => {
+                                const active = specialty === s;
+                                return (
+                                    <Chip
+                                        key={s}
+                                        label={s}
+                                        size="small"
+                                        onClick={() => setSpecialty(active ? '' : s)}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            fontWeight: 600,
+                                            background: active ? brand.ink : '#fff',
+                                            color: active ? '#fff' : brand.inkMuted,
+                                            border: `1px solid ${active ? brand.ink : brand.border}`,
+                                            '&:hover': { background: active ? brand.ink : brand.surfaceAlt },
+                                        }}
+                                    />
+                                );
+                            })}
                         </Box>
                     </Box>
 
-                    {/* Doctor cards */}
-                    {preview.length > 0 ? (
-                        <Grid container spacing={2.5}>
+                    {/* Doctor cards / skeletons / empty */}
+                    {isLoading ? (
+                        <Grid container spacing={3}>
+                            {Array.from({ length: 4 }).map((_, i) => (
+                                <Grid item xs={12} sm={6} md={3} key={i}>
+                                    <DoctorCardSkeleton />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    ) : preview.length > 0 ? (
+                        <Grid container spacing={3}>
                             {preview.map(doctor => (
                                 <Grid item xs={12} sm={6} md={3} key={doctor._id}>
-                                    <Box
-                                        onClick={() => navigate(`/docprofile/${doctor._id}`)}
-                                        sx={{
-                                            bgcolor: '#fff',
-                                            borderRadius: 3,
-                                            border: '1px solid #e8f0fe',
-                                            boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
-                                            overflow: 'hidden',
-                                            cursor: 'pointer',
-                                            transition: 'transform 0.2s, box-shadow 0.2s',
-                                            '&:hover': {
-                                                transform: 'translateY(-5px)',
-                                                boxShadow: '0 10px 28px rgba(25,118,210,0.14)',
-                                            },
-                                        }}
-                                    >
-                                        {/* Image */}
-                                        <Box sx={{ position: 'relative', height: 160, overflow: 'hidden' }}>
-                                            <Box
-                                                component="img"
-                                                src={doctor.imageUrl || FALLBACK_IMG}
-                                                alt={doctor.name}
-                                                sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                            />
-                                            <Box sx={{
-                                                position: 'absolute', inset: 0,
-                                                background: 'linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 55%)',
-                                            }} />
-                                            <Chip
-                                                label="● Available"
-                                                size="small"
-                                                sx={{
-                                                    position: 'absolute', top: 10, right: 10,
-                                                    bgcolor: 'rgba(46,125,50,0.9)', color: '#fff',
-                                                    fontSize: 10, fontWeight: 700,
-                                                    '& .MuiChip-label': { px: 1 },
-                                                }}
-                                            />
-                                        </Box>
-
-                                        {/* Info */}
-                                        <Box sx={{ p: 2 }}>
-                                            <Typography fontWeight={700} fontSize={15} noWrap>
-                                                Dr. {doctor.name}
-                                            </Typography>
-                                            <Chip
-                                                label={doctor.speciality}
-                                                size="small"
-                                                color="primary"
-                                                variant="outlined"
-                                                sx={{ fontSize: 10, my: 0.8, height: 22 }}
-                                            />
-
-                                            {/* Rating row */}
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-                                                {doctor.averageRating > 0 ? (
-                                                    <>
-                                                        <Rating value={doctor.averageRating} precision={0.5} readOnly size="small"
-                                                            sx={{ fontSize: 14 }} />
-                                                        <Typography variant="caption" fontWeight={700} color="#f59e0b">
-                                                            {doctor.averageRating.toFixed(1)}
-                                                        </Typography>
-                                                        <Typography variant="caption" color="text.secondary">
-                                                            ({doctor.totalRatings})
-                                                        </Typography>
-                                                    </>
-                                                ) : (
-                                                    <Typography variant="caption" color="text.secondary">New Doctor</Typography>
-                                                )}
-                                            </Box>
-
-                                            {/* Fee + Book */}
-                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
-                                                    <CurrencyRupeeIcon sx={{ fontSize: 14, color: '#1976d2' }} />
-                                                    <Typography fontWeight={700} fontSize={14} color="#1976d2">
-                                                        {doctor.fee}
-                                                    </Typography>
-                                                </Box>
-                                                <Button
-                                                    size="small"
-                                                    variant="contained"
-                                                    onClick={(e) => { e.stopPropagation(); navigate(`/docprofile/${doctor._id}`); }}
-                                                    sx={{ borderRadius: 2, fontSize: 11, fontWeight: 600, px: 1.5, py: 0.4, textTransform: 'none', minWidth: 0 }}
-                                                >
-                                                    Book
-                                                </Button>
-                                            </Box>
-                                        </Box>
-                                    </Box>
+                                    <DoctorCard doctor={doctor} />
                                 </Grid>
                             ))}
                         </Grid>
                     ) : (
-                        <Box sx={{ textAlign: 'center', py: 6 }}>
-                            <Typography color="text.secondary">
-                                {!doctors?.length ? 'Loading doctors...' : 'No doctors match your search.'}
+                        <Box sx={{ textAlign: 'center', py: 8 }}>
+                            <LocalHospitalIcon sx={{ fontSize: 56, color: brand.inkFaint, mb: 2 }} />
+                            <Typography fontWeight={700} color={brand.ink} fontSize={17}>
+                                No doctors match your search
+                            </Typography>
+                            <Typography color="text.secondary" fontSize={14} mt={0.5}>
+                                Try a different name or specialty.
                             </Typography>
                         </Box>
                     )}
@@ -280,32 +275,63 @@ function Home() {
 
             {/* CTA Banner */}
             <Box sx={{
-                background: 'linear-gradient(135deg, #1976d2, #42a5f5)',
-                py: 8, px: { xs: 3, md: 8 }, textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+                py: { xs: 8, md: 12 },
+                px: { xs: 3, md: 8 },
+                textAlign: 'center',
+                background: `linear-gradient(135deg, ${brand.primaryDark} 0%, ${brand.primary} 100%)`,
             }}>
-                <Typography variant="h4" fontWeight={800} color="#fff" mb={1}>
-                    Ready to take charge of your health?
-                </Typography>
-                <Typography color="rgba(255,255,255,0.85)" mb={4} fontSize={16}>
-                    Join thousands of patients who trust Medicare for their healthcare needs.
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-                    <Button
-                        component={Link} to="/register"
-                        variant="contained"
-                        size="large"
-                        sx={{ bgcolor: '#fff', color: '#1976d2', borderRadius: 2, px: 4, fontWeight: 700, '&:hover': { bgcolor: '#e3f2fd' } }}
-                    >
-                        Sign Up Free
-                    </Button>
-                    <Button
-                        component={Link} to="/doctors"
-                        variant="outlined"
-                        size="large"
-                        sx={{ color: '#fff', borderColor: '#fff', borderRadius: 2, px: 4, fontWeight: 700, '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.1)' } }}
-                    >
-                        Browse Doctors
-                    </Button>
+                {/* Decorative shapes */}
+                <Box aria-hidden sx={{
+                    position: 'absolute',
+                    top: -80, right: -80,
+                    width: 320, height: 320,
+                    borderRadius: '50%',
+                    background: alpha('#fff', 0.08),
+                }} />
+                <Box aria-hidden sx={{
+                    position: 'absolute',
+                    bottom: -100, left: -60,
+                    width: 260, height: 260,
+                    borderRadius: '50%',
+                    background: alpha('#fff', 0.06),
+                }} />
+
+                <Box sx={{ position: 'relative', maxWidth: 720, mx: 'auto' }}>
+                    <Typography variant="h3" fontWeight={800} color="#fff" mb={2}
+                        sx={{ fontSize: { xs: '1.8rem', md: '2.6rem' }, letterSpacing: '-0.02em' }}>
+                        Ready to take charge of your health?
+                    </Typography>
+                    <Typography color={alpha('#fff', 0.88)} mb={4} fontSize={17} lineHeight={1.6}>
+                        Join thousands of patients who trust Medicare for calm, connected healthcare.
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <Button
+                            component={Link} to="/register"
+                            size="large"
+                            sx={{
+                                bgcolor: '#fff', color: brand.primaryDark,
+                                fontWeight: 700,
+                                '&:hover': { bgcolor: '#F1F5F9', color: brand.primaryDark },
+                            }}
+                        >
+                            Sign up free
+                        </Button>
+                        <Button
+                            component={Link} to="/doctors"
+                            variant="outlined"
+                            size="large"
+                            sx={{
+                                color: '#fff',
+                                borderColor: alpha('#fff', 0.4),
+                                fontWeight: 700,
+                                '&:hover': { borderColor: '#fff', bgcolor: alpha('#fff', 0.1) },
+                            }}
+                        >
+                            Browse doctors
+                        </Button>
+                    </Box>
                 </Box>
             </Box>
 
