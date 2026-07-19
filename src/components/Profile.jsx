@@ -7,6 +7,7 @@ import StarIcon from '@mui/icons-material/Star';
 import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import Calender from './Calender';
+import DoctorAvatar from './DoctorAvatar';
 import { getDoctorById } from '../services/api';
 import { DataContext } from '../context/DataProvider';
 
@@ -37,7 +38,6 @@ function Profile() {
         );
     }
 
-    const imageUrl = doctor?.imageUrl || 'https://www.shutterstock.com/image-photo/profile-photo-attractive-family-doc-600nw-1724693776.jpg';
     const name = doctor?.name ? `Dr. ${doctor.name}` : 'Doctor Profile';
     const speciality = doctor?.speciality || 'General Medicine';
     const fee = doctor?.fee ?? 0;
@@ -53,10 +53,14 @@ function Profile() {
                     display: 'flex', gap: 4, bgcolor: '#fff', borderRadius: 3,
                     boxShadow: '0 2px 12px rgba(0,0,0,0.08)', p: 4, mb: 4, flexWrap: 'wrap'
                 }}>
-                    <img
-                        src={imageUrl} alt={name}
-                        style={{ width: 180, height: 180, objectFit: 'cover', borderRadius: 16, flexShrink: 0 }}
-                    />
+                    <Box sx={{ width: 180, height: 180, borderRadius: 3, overflow: 'hidden', flexShrink: 0 }}>
+                        <DoctorAvatar
+                            src={doctor?.imageUrl}
+                            name={doctor?.name}
+                            variant="square"
+                            size={180}
+                        />
+                    </Box>
                     <Box sx={{ flex: 1, minWidth: 200 }}>
                         <Typography variant="h5" fontWeight={700} mb={1}>{name}</Typography>
                         <Chip icon={<MedicalServicesIcon />} label={speciality} color="primary" variant="outlined" sx={{ mb: 2 }} />

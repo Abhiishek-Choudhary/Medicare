@@ -9,6 +9,7 @@ import StarIcon from '@mui/icons-material/Star';
 import { Link } from 'react-router-dom';
 import AdminLayout from './AdminLayout';
 import ExportButton from './ExportButton';
+import DoctorAvatar from '../DoctorAvatar';
 import { adminListDoctors } from '../../services/api';
 import { brand } from '../../theme';
 
@@ -100,9 +101,14 @@ function AdminDoctors() {
                                     <TableRow key={d._id} hover>
                                         <TableCell>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                <Avatar src={d.url} sx={{ width: 40, height: 40 }}>
-                                                    {d.title?.[0]}
-                                                </Avatar>
+                                                <Box sx={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                                                    <DoctorAvatar
+                                                        src={d.url}
+                                                        name={d.title}
+                                                        variant="circle"
+                                                        size={40}
+                                                    />
+                                                </Box>
                                                 <Box>
                                                     <Typography fontWeight={700}>{d.title}</Typography>
                                                     <Typography variant="caption" color={brand.inkFaint}>

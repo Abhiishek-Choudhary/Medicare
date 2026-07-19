@@ -20,6 +20,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
+import DoctorAvatar from './DoctorAvatar';
 import { DataContext } from '../context/DataProvider';
 import { getUserAppointments, cancelAppointment, rescheduleAppointment, submitRating } from '../services/api';
 import { brand } from '../theme';
@@ -527,13 +528,14 @@ function AppointmentCard({ appt, onCancel, onReschedule, isPast, onRate }) {
             },
         }}>
             <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', mb: 1.5 }}>
-                <Avatar sx={{
-                    width: 44, height: 44,
-                    background: `linear-gradient(135deg, ${brand.primary}, ${brand.primaryDark})`,
-                    fontWeight: 800, fontSize: 15,
-                }}>
-                    {appt.doctorName?.[0]?.toUpperCase() || 'D'}
-                </Avatar>
+                <Box sx={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                    <DoctorAvatar
+                        src={appt.doctorImageUrl}
+                        name={appt.doctorName}
+                        variant="circle"
+                        size={44}
+                    />
+                </Box>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography fontWeight={800} sx={{ lineHeight: 1.2 }}>Dr. {appt.doctorName || 'Unknown'}</Typography>
                     <Typography variant="caption" color={brand.inkFaint}>Consultation</Typography>

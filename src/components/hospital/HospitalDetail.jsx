@@ -15,6 +15,7 @@ import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
+import DoctorAvatar from '../DoctorAvatar';
 import { getHospitalPublic, getHospitalSlots, bookHospitalSlot } from '../../services/api';
 import { DataContext } from '../../context/DataProvider';
 import { brand } from '../../theme';
@@ -240,9 +241,17 @@ function DoctorsGrid({ doctors, hospitalId }) {
         <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' } }}>
             {doctors.map((d) => (
                 <Paper key={d._id} sx={{ p: 2.5, textAlign: 'center' }}>
-                    <Avatar src={d.imageUrl} sx={{ width: 72, height: 72, mx: 'auto', mb: 1.5 }}>
-                        {d.name?.[0]}
-                    </Avatar>
+                    <Box sx={{
+                        width: 72, height: 72, mx: 'auto', mb: 1.5,
+                        borderRadius: '50%', overflow: 'hidden',
+                    }}>
+                        <DoctorAvatar
+                            src={d.imageUrl}
+                            name={d.name}
+                            variant="circle"
+                            size={72}
+                        />
+                    </Box>
                     <Typography fontWeight={700}>Dr. {d.name}</Typography>
                     <Typography variant="caption" color={brand.inkFaint}>{d.speciality}</Typography>
                     <Typography variant="body2" fontWeight={700} sx={{ mt: 0.5, color: brand.primary }}>

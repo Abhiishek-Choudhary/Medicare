@@ -23,6 +23,7 @@ import {
     getHospitalBookingsInbox, updateHospitalBookingStatus,
     getAllDoctors, listMedicines,
 } from '../../services/api';
+import DoctorAvatar from '../DoctorAvatar';
 import { DataContext } from '../../context/DataProvider';
 import { CartContext } from '../../context/CartProvider';
 import { brand } from '../../theme';
@@ -570,7 +571,9 @@ function DoctorsTab({ hospital, onChange }) {
                     isOptionEqualToValue={(a, b) => a._id === b._id}
                     renderOption={(props, o) => (
                         <li {...props} key={o._id}>
-                            <Avatar src={o.imageUrl} sx={{ width: 32, height: 32, mr: 1.5 }}>{o.name?.[0]}</Avatar>
+                            <Box sx={{ width: 32, height: 32, mr: 1.5, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                                <DoctorAvatar src={o.imageUrl} name={o.name} variant="circle" size={32} />
+                            </Box>
                             <Box>
                                 <Typography variant="body2" fontWeight={600}>{o.name}</Typography>
                                 <Typography variant="caption" color={brand.inkFaint}>{o.speciality}</Typography>

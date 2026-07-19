@@ -11,6 +11,7 @@ import RateReviewIcon from '@mui/icons-material/RateReview';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AdminLayout from './AdminLayout';
+import DoctorAvatar from '../DoctorAvatar';
 import { adminGetDoctor, adminUpdateDoctor, adminDeleteDoctor } from '../../services/api';
 import { brand } from '../../theme';
 
@@ -134,9 +135,14 @@ function AdminDoctorDetail() {
 
             <Paper sx={{ p: 3, mb: 3 }}>
                 <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <Avatar src={doctor.url} sx={{ width: 80, height: 80 }}>
-                        {doctor.title?.[0]}
-                    </Avatar>
+                    <Box sx={{ width: 80, height: 80, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                        <DoctorAvatar
+                            src={doctor.url}
+                            name={doctor.title}
+                            variant="circle"
+                            size={80}
+                        />
+                    </Box>
                     <Box sx={{ flex: 1, minWidth: 200 }}>
                         <Typography variant="h5" fontWeight={800}>{doctor.title}</Typography>
                         <Chip label={doctor.category} size="small" sx={{ mt: 0.5, background: brand.surfaceAlt }} />

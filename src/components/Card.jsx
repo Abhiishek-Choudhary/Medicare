@@ -4,9 +4,8 @@ import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import StarIcon from '@mui/icons-material/Star';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from 'react-router-dom';
+import DoctorAvatar from './DoctorAvatar';
 import { brand } from '../theme';
-
-const FALLBACK_IMG = 'https://www.shutterstock.com/image-photo/profile-photo-attractive-family-doc-600nw-1724693776.jpg';
 
 export default function DoctorCard({ doctor }) {
     const navigate = useNavigate();
@@ -42,16 +41,17 @@ export default function DoctorCard({ doctor }) {
         >
             {/* Image */}
             <Box sx={{ position: 'relative', height: 190, overflow: 'hidden' }}>
-                <Box
-                    component="img"
-                    className="doctor-img"
-                    src={doctor.imageUrl || FALLBACK_IMG}
-                    alt={doctor.name}
-                    sx={{
-                        width: '100%', height: '100%', objectFit: 'cover',
-                        transition: 'transform 0.4s ease',
-                    }}
-                />
+                <Box className="doctor-img" sx={{
+                    width: '100%', height: '100%',
+                    transition: 'transform 0.4s ease',
+                }}>
+                    <DoctorAvatar
+                        src={doctor.imageUrl}
+                        name={doctor.name}
+                        variant="tile"
+                        size={190}
+                    />
+                </Box>
                 {/* Availability badge */}
                 <Box sx={{
                     position: 'absolute', top: 12, right: 12,
